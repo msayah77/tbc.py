@@ -1,0 +1,72 @@
+import random
+
+class Character:
+    def __init__(self, name, hit_points, hit_chance, max_damage, armor):
+        # Initialize the character's attributes and validate them
+        self._name = name
+        self._hit_points = max(hit_points, 0)
+        self._hit_chance = max(0, min(hit_chance, 100))
+        self._max_damage = max(max_damage, 1)
+        self._armor = max(armor, 0)
+
+    @property
+    def name(self):
+        # Get the character's name
+        return self._name
+
+    @property
+    def hit_points(self):
+        # Return the current hit points
+        return self._hit_points
+
+    @hit_points.setter
+    def hit_points(self, value):
+        # Set hit points and making sure they stay above zero
+        self._hit_points = max(value, 0)
+
+    def print_stats(self): # Show the character's statistics
+        print(f"{self.name}\n")
+        print(f"Hit points: {self.hit_points}")
+        print(f"Hit percentage: {self._hit_chance}")
+        print(f"Armor rating: {self._armor}")
+        print(f"Maximum damage: {self._max_damage}\n")
+
+    def attack(self, opponent): # Try to hit the opponent according to the hit chance
+        if random.randint(1, 100) <= self._hit_chance:
+            # damage calculate
+            damage = max(random.randint(1, self._max_damage) - opponent._armor, 0)
+            # hurt the opponent
+            opponent.hit_points -= damage
+            print(f"{self.name} hits {opponent.name} for {damage} points of damage...\n")
+            # See if the opponent is defeated
+            if opponent.hit_points <= 0:
+                print(f"{opponent.name} loses hehe!\n")
+        else:
+            print(f"{self.name} missed the hit!\n")
+            
+
+# Turn-based fight function for two characters
+def fight(character1, character2):
+    # keep fighting until one character's hit points reach zero or less
+    while character1.hit_points > 0 and character2.hit_points > 0:
+        character1.attack(character2)
+        if character2.hit_points > 0:
+            character2.attack(character1)
+            #  show both characters remaining hit points
+        print(f"{character1.name} HP: {character1.hit_points}")
+        print(f"{character2.name} HP: {character2.hit_points}\n")
+        input("Press <ENTER> to continue...")
+
+# main function to set up characters and start the fight
+def main():
+    # creating two Character with stats
+    lion = Character("Lion", 10, 60, 5, 2)
+    tiger = Character("Tiger", 50, 20, 5, 0)
+
+    lion.print_stats()
+    tiger.print_stats()
+    
+    fight(lion, tiger)
+
+if __name__ == "__main__":
+    main()
